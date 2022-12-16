@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import logo from '/Users/ab7/Desktop/netflix-clone-version1/img/logo.png'
-import pseudo from '/Users/ab7/Desktop/netflix-clone-version1/img/pseudo.png'
+import logo from 'img/logo.png'
+import pseudo from 'img/pseudo.png'
 import {SearchIcon, BellIcon} from "@heroicons/react/outline/"
 import Link from 'next/link'
 import { useEffect, useState } from 'react'

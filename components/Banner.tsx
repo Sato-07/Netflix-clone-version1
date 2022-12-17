@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import React, { useEffect, useState } from 'react'
 import { Movie } from '../typing'
 import { baseUrl } from '../constants /movie'
@@ -30,8 +30,8 @@ function Banner({netflixOriginals}: Props) {
 
                 src={`${baseUrl}${movie?.backdrop_path || movie?.poster_path}`}
                 alt="dddddd"
-                layout='fill'
-                objectFit='cover'
+                layout="fill"
+                objectFit="cover"
             />
         </div>
         <h1 className='text-3xl font-bold md:text-4xl lg:text-5xl '>{movie?.title || movie?.name || movie?.original_name}</h1>

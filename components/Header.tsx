@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import logo from 'img/logo.png'
 import pseudo from 'img/pseudo.png'
 import {SearchIcon, BellIcon} from "@heroicons/react/outline/"

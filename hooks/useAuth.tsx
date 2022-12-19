@@ -38,10 +38,40 @@ interface AuthProviderProps{
 export const AuthProvider = ({children}: AuthProviderProps) => {
     const [ loading, setLoading ]= useState(false)
     const [user, setUser ] = useState<User | null>(null)
+    const [error, setError]= useState(null)
+    const [initialLoading, setInitialLoading]=useState(true)
     const router = useRouter()
+
+
+
+    useEffect(
+        () => 
+        // Accepts auth instance and give us back the user 
+        onAuthStateChanged(auth, (user) => {
+            // We check if there's a user
+            if(user){
+                //logged in..
+                setUser(user)
+                setLoading(false)
+            }
+            // If there isn't a user setloading true and we push to the login page
+            else{
+                //not logged in..
+                setUser(null)
+                setLoading(true)
+                router.push('/login')
+            }
+            setInitialLoading(false)
+        }),
+        [auth]
+    )
+
+
+
 
     const signUp = async (email:string, password:string) =>{
         setLoading(true)
+
         await createUserWithEmailAndPassword(auth, email, password).then((userCredential) =>{
             setUser(userCredential.user)
             router.push('/')
@@ -74,9 +104,20 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
         .catch((error) => alert(error.message))
         .finally(()=> setLoading(false))
     }
-  return <AuthContext.Provider>
-    {children}
+
+    const memoedValue = useMemo(()=>({
+        user,
+        signUp,
+        signIn,
+        logOut,
+        error,
+        loading
+    }), [user, loading, ])
+
+  return( <AuthContext.Provider value={memoedValue}>
+    {!initialLoading && children}
   </AuthContext.Provider>
+  )
 }
 
 export default function useAuth(){

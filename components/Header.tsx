@@ -4,8 +4,13 @@ import pseudo from 'img/pseudo.png'
 import {SearchIcon, BellIcon} from "@heroicons/react/outline/"
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import useAuth from '../hooks/useAuth'
+
+
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const { logOut } = useAuth()
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,8 +55,9 @@ function Header() {
       <p className=' hidden lg:inline'> Kids </p>
       <BellIcon className='h-6 w-6'
       />
-      <Link href="/account">
+      {/* <Link href="/account"> */}
       <Image
+      onClick={ logOut}
       src= { pseudo }
       alt="pseudo-netflix"
       width={45}
@@ -59,7 +65,7 @@ function Header() {
       className="cursor-pointer rounded"
 
       />
-      </Link>
+      {/* </Link> */}
       </div>
     </header>
 

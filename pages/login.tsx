@@ -4,7 +4,8 @@ import Image from 'next/legacy/image'
 import background from "img/background.jpeg"
 import logo from "img/logo.png"
 import { useForm, SubmitHandler } from "react-hook-form";
-import { sign } from 'crypto'
+import useAuth from '../hooks/useAuth'
+
 
 interface Inputs{
   email: string
@@ -14,15 +15,16 @@ interface Inputs{
 
 function Login() {
   const [login,setLogin ] = useState(false)
-  // Hook form //
+  const {signIn,signUp} = useAuth()
+  // Hook form 
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = async (data)=>{
+  const onSubmit: SubmitHandler<Inputs> = async ({email, password})=>{
     if(login){
-      // await signIn(email,password)
+      await signIn(email,password)
 
     }
     else{
-      // await signUp(email,password)
+      await signUp(email,password)
 
     }
   }

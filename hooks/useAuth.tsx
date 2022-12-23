@@ -1,3 +1,4 @@
+import { Snackbar } from '@mui/material'
 import { error } from 'console'
 import {
     createUserWithEmailAndPassword,
@@ -7,7 +8,7 @@ import {
     User,
 } from 'firebase/auth'
 import{ useRouter } from 'next/router'
-import { createContext, useContext, useEffect, useMemo, useState  } from "react"
+import { createContext, useCallback, useContext, useEffect, useMemo, useState  } from "react"
 import {auth} from '../firebase'
 
 interface IAuth {
@@ -38,16 +39,24 @@ interface AuthProviderProps{
 export const AuthProvider = ({children}: AuthProviderProps) => {
     const [ loading, setLoading ]= useState(false)
     const [user, setUser ] = useState<User | null>(null)
-    const [error, setError]= useState(null)
+    const [error, setError] = useState<string | null>(null);
     const [initialLoading, setInitialLoading]=useState(true)
+
     const router = useRouter()
+
+    const handleAuthStateChanged = useCallback(
+        (auth: any, cb: (use: User | null) => void) => {
+          onAuthStateChanged(auth, cb);
+        },
+        []
+      );    
 
 
 
     useEffect(
         () => 
         // Accepts auth instance and give us back the user 
-        onAuthStateChanged(auth, (user) => {
+        handleAuthStateChanged(auth, (user) => {
             // We check if there's a user
             if(user){
                 //logged in..
@@ -63,7 +72,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
             }
             setInitialLoading(false)
         }),
-        [auth]
+        [auth,handleAuthStateChanged, router]
     )
 
 
@@ -71,6 +80,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 
     const signUp = async (email:string, password:string) =>{
         setLoading(true)
+        setError(null)
 
         await createUserWithEmailAndPassword(auth, email, password).then((userCredential) =>{
             setUser(userCredential.user)
@@ -78,9 +88,11 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
             setLoading(false)
 
         })
-        .catch((error) => alert(error.message))
+        .catch((error) => {setError(error.message)})
         .finally(() => setLoading(false))
     }
+
+
     const signIn = async (email:string, password:string) =>{
         setLoading(true)
 
@@ -90,7 +102,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
             setLoading(false)
 
         })
-        .catch((error) => alert(error.message))
+        .catch((error) => {setError(error.message) })
         .finally(() => setLoading(false))
     }
     
@@ -101,7 +113,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
         .then(() => {
             setUser(null)
         })
-        .catch((error) => alert(error.message))
+        .catch((error) =>{setError(error.message)})
         .finally(()=> setLoading(false))
     }
 
@@ -115,6 +127,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     }), [user, loading, ])
 
   return( <AuthContext.Provider value={memoedValue}>
+    {!initialLoading && <Snackbar message={error}/>}
     {!initialLoading && children}
   </AuthContext.Provider>
   )
